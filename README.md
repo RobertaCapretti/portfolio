@@ -6,3 +6,8 @@
 
 - 📫 How to reach me **caprettiroberta@gmail.com**
                       **"https://linkedin.com/in/www.linkedin.com/in/roberta-capretti"**
+
+## Descripción
+
+Este es mi porfolio como Data Analyst/Scientist, creado a partir de distitas herramientas: 
+ETL con SQL/Python y visualización con Power BI y Qlik Sense.
