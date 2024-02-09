@@ -9,5 +9,5 @@
 
 ## Descripción
 
-Este es mi porfolio como Data Analyst/Scientist, creado a partir de distitas herramientas: 
+Este es mi porfolio como Data Analyst/Scientist, creado a partir de distintas herramientas: 
 ETL con SQL/Python y visualización con Power BI y Qlik Sense.
