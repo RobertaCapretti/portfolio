@@ -1,0 +1,625 @@
+SET ThousandSep=',';
+SET DecimalSep='.';
+SET MoneyThousandSep=',';
+SET MoneyDecimalSep='.';
+SET MoneyFormat='$ ###0.00;-$ ###0.00';
+SET TimeFormat='h:mm:ss';
+SET DateFormat='M/D/YYYY';
+SET TimestampFormat='M/D/YYYY h:mm:ss[.fff] TT';
+SET FirstWeekDay=6;
+SET BrokenWeeks=1;
+SET ReferenceDay=0;
+SET FirstMonthOfYear=1;
+SET CollationLocale='en-US';
+SET CreateSearchIndexOnReload=1;
+SET MonthNames='Jan;Feb;Mar;Apr;May;Jun;Jul;Aug;Sep;Oct;Nov;Dec';
+SET LongMonthNames='January;February;March;April;May;June;July;August;September;October;November;December';
+SET DayNames='Mon;Tue;Wed;Thu;Fri;Sat;Sun';
+SET LongDayNames='Monday;Tuesday;Wednesday;Thursday;Friday;Saturday;Sunday';
+SET NumericalAbbreviation='3:k;6:M;9:G;12:T;15:P;18:E;21:Z;24:Y;-3:m;-6:μ;-9:n;-12:p;-15:f;-18:a;-21:z;-24:y';
+
+// CADENA DE CONEXIÓN A DROPBOX
+SET vR_Root = lib://Dropbox/01_BusinessIntelligenceProject/;
+SET vR_Environment  = $(vR_Root)App_Develop/;
+SET vR_Project = $(vR_Environment)01_SalesAnalysis/;
+SET vR_Version = $(vR_Project)V1/;
+
+// RUTA DE FUENTES EXTERNAS
+SET vR_Data = $(vR_Version)01_Data/;
+
+// RUTA DE QVDS 
+SET vR_QVD = $(vR_Version)02_Qvd/;
+SET vR_QVDExt = $(vR_QVD)01_Extraction/;
+SET vR_QVDTra = $(vR_QVD)02_Transformation/;
+
+// RUTA DE QVS 
+SET vR_QVS = $(vR_Version)03_Qvs/;
+SET vR_QVSExt = $(vR_QVS)01_Extraction/;
+SET vR_QVSTra = $(vR_QVS)02_Transformation/;
+
+/*-------------------------------------------------------------------------------------*/ 
+// 00 Subrutinas
+
+SET vR_Store =  $(vR_QVDExt);
+Sub Sub_STORE
+STORE [$(vTable)] INTO [$(vR_Store)$(vTable).qvd] (QVD);
+
+DROP TABLE [$(vTable)];
+    Carga $(vTable);
+    LET vTable = Null ();
+Endsub  
+
+SET vArchivoQVS = E01_L1_MYSQL_DimCurrency; 
+SET vR_Include= $(vR_QVSExt); 
+
+Sub Sub_Include
+
+Trace     
+--------------------------------------------------------------- 
+Cargar del QVS $(vArchivoQVS)
+    ------------------------------------------------------------------;  
+EndSub
+
+/*-------------------------------------------------------------------------------------*/  
+
+// 01 Extraccion de tablas desde MySQL
+
+/*-----------------------Tabla DimCurrency----------------------------------------------------*/  
+[L1_MYSQL_DimCurrency]:
+SELECT *
+FROM Spanish.DimCurrency;
+
+SET vTable = L1_MYSQL_DimCurrency;
+CALL Sub_STORE;
+
+STORE [L1_MYSQL_DimCurrency] INTO [$(vR_QVDExt)L1_MYSQL_DimDate.qvd] (QVD);
+DROP TABLE L1_MYSQL_DimDate;
+
+/*-----------------------Tabla DimDate----------------------------------------------------*/ 
+[L1_MYSQL_DimDate]:
+SELECT *
+FROM Spanish.DimDate;
+
+SET vTable = L1_MYSQL_DimDate;
+CALL Sub_STORE;
+
+STORE [L1_MYSQL_DimDate] INTO [$(vR_QVDExt)L1_MYSQL_DimDate.qvd] (QVD);
+DROP TABLE L1_MYSQL_DimDate;
+
+/*-----------------------Tabla DimCustomer----------------------------------------------------*/ 
+[L1_MYSQL_DimCustomer]:
+SELECT *
+FROM Spanish.DimCustomer;
+
+SET vTable = L1_MYSQL_DimCustomer;
+CALL Sub_STORE;
+
+STORE [L1_MYSQL_DimCustomer] INTO [$(vR_QVDExt)L1_MYSQL_DimCustomer.qvd] (QVD);
+DROP TABLE L1_MYSQL_DimCustomer;
+
+/*-----------------------Tabla DimEmployee----------------------------------------------------*/ 
+[L1_MYSQL_DimEmployee]:
+SELECT *
+FROM Spanish.DimEmployee;
+
+SET vTable = L1_MYSQL_DimEmployee;
+CALL Sub_STORE;
+
+STORE [L1_MYSQL_DimEmployee] INTO [$(vR_QVDExt)L1_MYSQL_DimEmployee.qvd] (QVD);
+DROP TABLE L1_MYSQL_DimEmployee;
+
+/*-----------------------Tabla DimGeography----------------------------------------------------*/ 
+[L1_MYSQL_DimGeography]:
+SELECT *
+FROM Spanish.DimGeography;
+
+SET vTable = L1_MYSQL_DimGeography;
+CALL Sub_STORE;
+
+STORE [L1_MYSQL_DimGeography] INTO [$(vR_QVDExt)L1_MYSQL_DimGeography.qvd] (QVD);
+DROP TABLE L1_MYSQL_DimGeography;
+
+/*-----------------------Tabla DimProduct----------------------------------------------------*/ 
+[L1_MYSQL_DimProduct]:
+SELECT *
+FROM Spanish.DimProduct;
+
+SET vTable = L1_MYSQL_DimProduct;
+CALL Sub_STORE;
+
+STORE [L1_MYSQL_DimProduct] INTO [$(vR_QVDExt)L1_MYSQL_DimProduct.qvd] (QVD);
+DROP TABLE L1_MYSQL_DimProduct;
+
+/*-----------------------Tabla DimProductCategory-----------------------------------------------*/ 
+[L1_MYSQL_DimProductCategory]:
+SELECT *
+FROM Spanish.DimProductCategory;
+
+SET vTable = L1_MYSQL_DimProductCategory;
+CALL Sub_STORE;
+
+STORE [L1_MYSQL_DimProductCategory] INTO [$(vR_QVDExt)L1_MYSQL_DimProductCategory.qvd] (QVD);
+DROP TABLE L1_MYSQL_DimProductCategory;
+
+/*-----------------------Tabla DimProductSubcategory------------------------------------------------*/ 
+[L1_MYSQL_DimProductSubcategory]:
+SELECT *
+FROM Spanish.DimProductSubcategory;
+
+SET vTable = L1_MYSQL_DimProductSubcategory;
+CALL Sub_STORE;
+
+STORE [L1_MYSQL_DimProductSubcategory] INTO [$(vR_QVDExt)L1_MYSQL_DimProductSubcategory.qvd] (QVD);
+DROP TABLE L1_MYSQL_DimProductSubcategory;
+
+/*-----------------------Tabla DimPromotion----------------------------------------------------*/ 
+[L1_MYSQL_DimPromotion]:
+SELECT *
+FROM Spanish.DimPromotion;
+
+SET vTable = L1_MYSQL_DimPromotion;
+CALL Sub_STORE;
+
+STORE [L1_MYSQL_DimPromotion] INTO [$(vR_QVDExt)L1_MYSQL_DimPromotion.qvd] (QVD);
+DROP TABLE L1_MYSQL_DimPromotion;
+
+/*-----------------------Tabla DimSalesTerritory-------------------------------------------------*/ 
+[L1_MYSQL_DimSalesTerritory]:
+SELECT *
+FROM Spanish.DimSalesTerritory;
+
+SET vTable = L1_MYSQL_DimSalesTerritory;
+CALL Sub_STORE;
+
+STORE [L1_MYSQL_DimSalesTerritory] INTO [$(vR_QVDExt)L1_MYSQL_DimSalesTerritory.qvd] (QVD);
+DROP TABLE L1_MYSQL_DimSalesTerritory;
+
+/*-----------------------Tabla DimStore----------------------------------------------------*/ 
+[L1_MYSQL_DimSTORE]:
+SELECT *
+FROM Spanish.DimSTORE;
+
+SET vTable = L1_MYSQL_DimSTORE;
+CALL Sub_STORE;
+
+STORE [L1_MYSQL_DimSTORE] INTO [$(vR_QVDExt)L1_MYSQL_DimSTORE.qvd] (QVD);
+DROP TABLE L1_MYSQL_DimSTORE;
+
+/*-----------------------Tabla FactSales----------------------------------------------------*/ 
+[L1_MYSQL_FactSales]:
+SELECT *
+FROM Spanish.FactSales;
+
+SET vTable = L1_MYSQL_FactSales;
+CALL Sub_STORE;
+
+STORE [L1_MYSQL_FactSales] INTO [$(vR_QVDExt)L1_MYSQL_FactSales.qvd] (QVD);
+DROP TABLE L1_MYSQL_FactSales;
+
+/*-----------------------Tabla FactOnlineSales-------------------------------------------------*/ 
+[L1_MYSQL_FactOnlineSales]:
+SELECT *
+FROM Spanish.FactOnlineSales;
+
+SET vTable = L1_MYSQL_FactOnlineSales;
+CALL Sub_STORE;
+
+STORE [L1_MYSQL_FactOnlineSales] INTO [$(vR_QVDExt)L1_MYSQL_FactOnlineSales.qvd] (QVD);
+DROP TABLE L1_MYSQL_FactOnlineSales;
+
+/*-----------------------Tabla FactExchangeRate--------------------------------------------------*/ 
+[L1_MYSQL_FactExchangeRate]:
+SELECT *
+FROM Spanish.FactExchangeRate;
+
+SET vTable = L1_MYSQL_FactExchangeRate;
+CALL Sub_STORE;
+
+STORE [L1_MYSQL_FactExchangeRate] INTO [$(vR_QVDExt)L1_MYSQL_FactExchangeRate.qvd] (QVD);
+DROP TABLE L1_MYSQL_FactExchangeRate;
+
+/*-----------------------Tabla RFM---------------------------------------------------------------*/ 
+[L1_MYSQL_RFM]:
+SELECT *
+FROM Spanish.RFM;
+
+SET vTable = L1_MYSQL_RFM;
+CALL Sub_STORE;
+
+STORE [L1_MYSQL_RFM] INTO [$(vR_QVDExt)L1_MYSQL_RFM.qvd] (QVD);
+DROP TABLE L1_MYSQL_RFM;
+
+/*-----------------------Tabla FactBudget----------------------------------------------------------*/ 
+
+SET vTable = L1_XLSX_FactBudget;
+
+[$(vTable)]:
+LOAD *
+FROM [$(vR_Data)Contoso - Budget.xlsx]
+(ooxml, embedded labels, header is 1 lines, table is Budget);
+
+CALL Sub_STORE;
+
+/*------------------------------------////Transformaciones//////--------------------------------------*/ 
+
+/*----------------------------------------Tabla DimProductMaster -------------------------------------*/ 
+Tbl_tmp01:
+          LOAD
+              *
+          FROM [$(vR_QVDExt)L1_MYSQL_DimProduct.qvd] (qvd);
+LEFT JOIN
+          LOAD
+              *
+          FROM [$(vR_QVDExt)L1_MYSQL_DimProductSubcategory.qvd]
+          (qvd);
+LEFT JOIN 
+          LOAD
+             *
+          FROM [$(vR_QVDExt)L1_MYSQL_DimProductCategory.qvd] (qvd);
+          
+// // * --------------------------------------
+SET vTable = L2_DimProductMaster;
+Rename Table Tbl_tmp01 to $(vTable);
+SET vR_STORE =  $(vR_QVDTra);
+CALL Sub_STORE;
+// // * --------------------------------------
+
+/*----------------------------------------Tabla StoreMaster ----------------------------------------*/ 
+Tbl_tmp01:
+        LOAD
+            *
+        FROM [$(vR_QVDExt)L1_MYSQL_DimSTORE.qvd] (qvd);
+LEFT JOIN 
+        LOAD
+            *
+        FROM [$(vR_QVDExt)L1_MYSQL_DimGeography.qvd] (qvd);
+
+// // * --------------------------------------
+SET vTable = L2_DimSTOREMaster;
+Rename Table Tbl_tmp01 to $(vTable);
+SET vR_STORE =  $(vR_QVDTra);
+CALL Sub_STORE;
+// // * --------------------------------------
+
+/*----------------------------------------Tabla CustomerMaster ----------------------------------------*/ 
+Tbl_tmp01:
+        LOAD
+            *,
+            if (not isnull(FirstName),
+            	FirstName & ' '&if( len(MiddleName)=0,'',MiddleName&' ')&LastName,
+            	'Customer without name') as FullName,     
+            if (MaritalStatus='M' and TotalChildren=0, 'Married without children',     
+            if (MaritalStatus='M' and TotalChildren>0, 'Married with children', 
+            if (MaritalStatus='S' and TotalChildren=0, 'Single without children', 
+            if (MaritalStatus='S' and TotalChildren>0, 'Single with children', 
+            'Sin Datos')))) as CustomerProfile
+        FROM [$(vR_QVDExt)L1_MYSQL_DimCustomer.qvd] (qvd);
+LEFT JOIN
+        LOAD
+            *
+        FROM [$(vR_QVDExt)L1_MYSQL_DimGeography.qvd] (qvd);
+LEFT JOIN
+        LOAD
+            *
+        FROM [$(vR_QVDExt)L1_MYSQL_DimSalesTerritory.qvd] (qvd);
+
+CONCATENATE
+LOAD * Inline [
+CustomerKey, CustomerLabel
+999999, Sin Identificar
+];
+
+LEFT JOIN
+LOAD
+    *
+    FROM [$(vR_QVDExt)L1_MYSQL_RFM.qvd] (qvd);
+
+// // * --------------------------------------
+SET vTable = L2_DimCustomerMaster;
+Rename Table Tbl_tmp01 to $(vTable);
+SET vR_STORE =  $(vR_QVDTra);
+CALL Sub_STORE;
+// // * --------------------------------------
+
+/*----------------------------------------Tabla CalendarMaster ----------------------------------------*/ 
+LET vInicio = Num(MakeDate(2000,1,1)); 
+LET vFin = Num(MakeDate(2050,12,31)); 
+
+Tbl_tmp01:
+LOAD DateKey,
+	Year(DateKey) as Year,
+    Month(DateKey) as Month,
+    Day(DateKey) as Day,
+    'Q'&Ceil(Month(DateKey)/3) as Quarter,
+    'S'&Ceil(Month(DateKey)/6) as Semester,
+    Num(QuarterEnd(DateKey)) as QuarterNum,
+    Num(Month(DateKey)) as MonthNum,
+    Date(MonthStart(DateKey), 'MMM YYYY') as Period,
+    Num(MonthStart(DateKey)) as PeriodNum,
+    'MTH' as _CalendarType
+;
+LOAD $(vInicio) + RecNo() -1 as DateKey
+AutoGenerate $(vFin)-$(vInicio)+1;
+
+// // * --------------------------------------
+SET vTable = L2_DimCalendarMaster;
+Rename Table Tbl_tmp01 to $(vTable);
+SET vR_STORE =  $(vR_QVDTra);
+CALL Sub_STORE;
+// // * --------------------------------------
+
+/*----------------------------------------Tabla FactSales ----------------------------------------*/ 
+
+SET vCampos ='	
+    STOREKey,
+    ProductKey,
+    PromotionKey,
+    CurrencyKey,
+    CustomerKey,
+    UnitCost,
+	UnitPrice
+';
+ 
+Tbl_Tmp01:
+LOAD
+	MonthStart(DateKey) as DateKey,
+    $(vCampos),
+    sum(SalesQuantity) as SalesQuantity,
+    sum(SalesAmount) as SalesAmount,
+    sum(ReturnQuantity) as ReturnQuantity,
+    sum(ReturnAmount) as ReturnAmount,
+    sum(DiscountQuantity) as DiscountQuantity,
+    sum(DiscountAmount) as DiscountAmount,
+    sum(TotalCost) as TotalCost,
+    count(DISTINCT SalesOrderNumber) as QuantityOrders
+FROM [$(vR_QVDExt)L1_MYSQL_FactOnlineSales.qvd] (qvd)
+GROUP BY
+	MonthStart(DateKey),
+    $(vCampos)
+    ;
+    
+/*--------------------------------------------------------------*/
+Tbl_Tmp02:
+NOCONCATENATE
+LOAD
+	DateKey,
+    $(vCampos),
+    SalesQuantity,
+    SalesAmount,
+    ReturnQuantity,
+    ReturnAmount,
+    DiscountQuantity,
+    DiscountAmount,
+    TotalCost,
+    QuantityOrders,
+    SalesAmount - ReturnAmount - TotalCost as GrossMargin,
+    SalesAmount - ReturnAmount - DiscountAmount - TotalCost as NetMargin  
+RESIDENT Tbl_Tmp01;
+DROP TABLE Tbl_Tmp01;
+
+// * --------------------------------------
+SET vTable = L2_FactOnlineSales;
+Rename Table Tbl_Tmp02 to $(vTable);
+SET vR_STORE = $(vR_QVDTra);
+CALL Sub_STORE;
+// * --------------------------------------
+
+Tbl_tmp01:
+LOAD
+    *
+    SalesAmount - ReturnAmount - TotalCost as GrossMargin,
+    SalesAmount - ReturnAmount - TotalCost - DiscountAmount as NetMargin
+FROM [$(vR_QVDExt)L1_MYSQL_FactSales.qvd] (qvd);
+
+// * ---------------------------------------------
+
+SET VCampos = '
+	DateKey,
+    ChannelKey,
+    CustomerKey,
+    STOREKey,
+    ProductKey,
+    PromotionKey,
+    CurrencyKey,
+    UnitCost,
+    UnitPrice
+'; 
+
+Tbl_tmp02:
+NOCONCATENATE
+LOAD
+    $(VCampos),
+    sum(SalesQuantity) as SalesQuantity,
+    sum(ReturnQuantity) as ReturnQuantity,
+    sum(ReturnAmount) as ReturnAmount,
+    sum(DiscountQuantity) as DiscountQuantity,
+    sum(DiscountAmount) as DiscountAmount,
+    sum(TotalCost) as TotalCost,
+    sum(SalesAmount) as SalesAmount,  
+    sum(GrossMargin) as GrossMargin,
+    sum(NetMargin) as NetMargin
+RESIDENT Tbl_tmp01
+GROUP BY $(VCampos);
+
+DROP TABLE Tbl_tmp01;
+
+// // * --------------------------------------
+SET vTable = L2_FactSales;
+Rename Table Tbl_tmp02 to $(vTable);
+SET vR_STORE =  $(vR_QVDTra);
+CALL Sub_STORE;
+// // * --------------------------------------
+
+Tbl_tmp01:
+LOAD
+	*
+FROM [$(vR_QVDTra)L2_FactOnlineSales.qvd] (qvd);
+
+CONCATENATE
+LOAD
+	*
+FROM [$(vR_QVDTra)L2_FactSales.qvd] (qvd);
+
+LEFT JOIN
+
+LOAD  
+       Floor(DateKey) as DateKey,
+    AverageRate as AverageRate_USD 
+FROM [$(vR_QVDExt)L1_MYSQL_FactExchangeRate.qvd] (qvd)
+WHERE  CurrencyKey=1;
+
+/*---------------------------------------------*/
+Tbl_Tmp02:
+NOCONCATENATE
+LOAD
+  *
+    UnitCost as UnitCost_EUR ,
+    UnitPrice as  UnitPrice_EUR,
+    SalesAmount as SalesAmount_EUR,
+    ReturnAmount as ReturnAmount_EUR,
+    DiscountAmount as DiscountAmount_EUR,
+    TotalCost as TotalCost_EUR,
+    GrossMargin as GrossMargin_EUR,
+    NetMargin as  NetMargin_EUR,
+    UnitCost/AverageRate_USD as UnitCost_USD,
+    UnitPrice/AverageRate_USD   as UnitPrice_USD,
+    SalesAmount/AverageRate_USD as SalesAmount_USD,
+    ReturnAmount/AverageRate_USD as ReturnAmount_USD,
+    DiscountAmount/AverageRate_USD as DiscountAmount_USD,
+    TotalCost/AverageRate_USD as TotalCost_USD,
+    GrossMargin/AverageRate_USD as GrossMargin_USD,
+    NetMargin/AverageRate_USD as  NetMargin_USD  
+RESIDENT Tbl_tmp01;
+DROP TABLE Tbl_tmp01;
+
+// * --------------------------------------
+SET vTable = L3_FactSalesConso;
+Rename Table Tbl_Tmp02 to $(vTable);
+SET vR_STORE = $(vR_QVDTra);
+CALL Sub_STORE;
+// * --------------------------------------
+
+/*--------------------------------------------------------------*/
+Tbl_tmp01:
+CrossTable(DateKey,AmountBudget_EUR,3)
+
+LOAD *
+FROM [$(vR_QVDExt)L1_XLSX_FactBudget.qvd] (qvd);
+
+/*--------------------------------------------------------------*/
+
+Tbl_tmp02:
+NOCONCATENATE
+    LOAD
+        num(Num#(DateKey)) as DateKey,
+        ChannelKey,
+        STOREKey,
+        ProductKey,
+        AmountBudget_EUR
+    RESIDENT Tbl_tmp01
+    WHERE AmountBudget_EUR <> 0;
+    DROP TABLE Tbl_tmp01;
+LEFT JOIN
+    LOAD
+        FLOOR(DateKey) as DateKey,
+        AverageRate as AverageRate_USD
+    FROM [$(vR_QVDExt)L1_MYSQL_FactExchangeRate.qvd] (qvd)
+    WHERE CurrencyKey=1;
+/*-----------------------------------------------------------*/
+Tbl_tmp03:
+NOCONCATENATE
+    LOAD
+        ChannelKey,
+        STOREKey,
+        ProductKey,
+        DateKey,
+        AmountBudget_EUR,
+        AmountBudget_EUR / AverageRate_USD as AmountBudget_USD
+    RESIDENT Tbl_tmp02;
+    DROP TABLE Tbl_tmp02;
+// /*-------------------------------------------------------*/
+SET vTable = L2_FactBudget;
+Rename Table Tbl_tmp03 to $(vTable);
+SET vR_STORE = $(vR_QVDTra);
+CALL Sub_STORE;
+/*-------------------------------------------------------*/
+
+Tbl_Tmp01:
+	LOAD
+        *
+    FROM [$(vR_QVDTra)L3_FactSalesConso.qvd] (qvd);
+CONCATENATE
+    LOAD
+       *
+    FROM [$(vR_QVDTra)L2_FactBudget.qvd] (qvd);
+/*-------------------------------------------------------*/
+SET vTable = L4_FactSales_Plus_Budget;
+Rename Table Tbl_Tmp01 to $(vTable);
+SET vR_STORE = $(vR_QVDTra);
+CALL Sub_STORE;
+/*-------------------------------------------------------*/
+
+
+/*--------------------------ETL y CALL Subrutinas--------------------------------*/
+// 01 ETL 
+LIB CONNECT TO 'Jupi Digital G4:MySQL_RDS';
+/*--------------------------Extracciones---------------------------------*/
+SET vR_Include= $(vR_QVSExt);
+SET vArchivoQVS = E01_L1_MYSQL_DimCurrency; CALL Sub_Include;
+SET vArchivoQVS = E02_L1_MYSQL_DimDate; CALL Sub_Include;
+SET vArchivoQVS = E03_L1_MYSQL_DimCustomer; CALL Sub_Include;
+SET vArchivoQVS = E04_L1_MYSQL_DimEmployee; CALL Sub_Include;
+SET vArchivoQVS = E05_L1_MYSQL_DimGeography; CALL Sub_Include;
+SET vArchivoQVS = E06_L1_MYSQL_DimProduct; CALL Sub_Include;
+SET vArchivoQVS = E07_L1_MYSQL_DimProductCategory; CALL Sub_Include;
+SET vArchivoQVS = E08_L1_MYSQL_DimProductSubcategory; CALL Sub_Include;
+SET vArchivoQVS = E09_L1_MYSQL_DimPromotion; CALL Sub_Include;
+SET vArchivoQVS = E10_L1_MYSQL_DimSalesTerritory; CALL Sub_Include;
+SET vArchivoQVS = E11_L1_MYSQL_DimSTORE; CALL Sub_Include;
+SET vArchivoQVS = E12_L1_MYSQL_FactSales; CALL Sub_Include;
+SET vArchivoQVS = E13_L1_MYSQL_FactOnlineSales; CALL Sub_Include;
+SET vArchivoQVS = E14_L1_MYSQL_FactExchangeRate; CALL Sub_Include;
+SET vArchivoQVS = E15_L1_MYSQL_RFM; CALL Sub_Include;
+SET vArchivoQVS = E16_L1_XLSX_FactBudget; CALL Sub_Include;
+
+/*--------------------------Transformacioes---------------------------------*/
+SET SET vR_Include= $(vR_QVSTra);
+SET vArchivoQVS = T01_L2_DimProductMaster; CALL Sub_Include;
+SET vArchivoQVS = T02_L2_DimSTOREMaster; CALL Sub_Include;
+SET vArchivoQVS = T03_L2_DimCustomerMaster; CALL Sub_Include;
+SET vArchivoQVS = T04_L2_DimCalendarMaster; CALL Sub_Include;
+SET vArchivoQVS = T05_L2_FactOnlineSales; CALL Sub_Include;
+SET vArchivoQVS = T06_L2_FactSales; CALL Sub_Include;
+SET vArchivoQVS = T07_L3_FactSalesConso; CALL Sub_Include;
+SET vArchivoQVS = T08_L2_FactBudget; CALL Sub_Include;
+SET vArchivoQVS = T09_L4_FactSales_Plus_Budget ; CALL Sub_Include;
+
+
+/*--------------------------Tablas utilizadas en la app final---------------------------------*/
+
+FactSalesConso:
+LOAD
+    *
+FROM [$(vR_QVDTra)L4_FactSales_Plus_Budget.qvd] (qvd);
+
+DimProductMaster:
+LOAD
+    *
+FROM [$(vR_QVDTra)L2_DimProductMaster.qvd] (qvd);
+
+DimCustomerMaster:
+LOAD
+    * 
+FROM [$(vR_QVDTra)L2_DimCustomerMaster.qvd] (qvd);
+
+DimStoreMaster:
+LOAD
+    *
+FROM [$(vR_QVDTra)L2_DimSTOREMaster.qvd] (qvd);
+
+DimCalendarMaster:
+LOAD
+    *
+FROM [$(vR_QVDTra)L2_DimCalendarMaster.qvd] (qvd)
+WHERE Exists(DateKey)
+;
