@@ -1,0 +1,862 @@
+Dataset Airbnb (New York City Airbnb Open Data): fuente Kaggle (https://www.kaggle.com/datasets/dgomonov/new-york-city-airbnb-open-data)
+ETL en Python para su análisis, limpieza y transformación. A su vez, se generaron  datos sinteticos con RandomForest
+
+ETL y Análisis Exploratorio de Datos: 
+
+[ ]
+Importación de librerías a utilizar
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import math
+import warnings
+
+from google.colab import files
+from sklearn.preprocessing import OneHotEncoder, StandardScaler, LabelEncoder
+from sklearn.pipeline import make_pipeline
+from sklearn.model_selection import train_test_split, StratifiedKFold, cross_val_score, RandomizedSearchCV, GridSearchCV
+from sklearn.metrics import classification_report, confusion_matrix, ConfusionMatrixDisplay
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+
+warnings.filterwarnings('ignore')
+Carga del dataset
+
+
+[ ]
+files.upload()
+
+
+[ ]
+airbnb = pd.read_csv("Airbnb_Open_Data.csv")
+Análisis exploratorio de datos (EDA)
+
+[ ]
+print(f'Forma: {airbnb.shape}')
+print(f'Columnas: {airbnb.columns}')
+airbnb
+
+
+[ ]
+airbnb.info()
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 102599 entries, 0 to 102598
+Data columns (total 26 columns):
+ #   Column                          Non-Null Count   Dtype  
+---  ------                          --------------   -----  
+ 0   id                              102599 non-null  int64  
+ 1   NAME                            102349 non-null  object 
+ 2   host id                         102599 non-null  int64  
+ 3   host_identity_verified          102310 non-null  object 
+ 4   host name                       102193 non-null  object 
+ 5   neighbourhood group             102570 non-null  object 
+ 6   neighbourhood                   102583 non-null  object 
+ 7   lat                             102591 non-null  float64
+ 8   long                            102591 non-null  float64
+ 9   country                         102067 non-null  object 
+ 10  country code                    102468 non-null  object 
+ 11  instant_bookable                102494 non-null  object 
+ 12  cancellation_policy             102523 non-null  object 
+ 13  room type                       102599 non-null  object 
+ 14  Construction year               102385 non-null  float64
+ 15  price                           102352 non-null  object 
+ 16  service fee                     102326 non-null  object 
+ 17  minimum nights                  102190 non-null  float64
+ 18  number of reviews               102416 non-null  float64
+ 19  last review                     86706 non-null   object 
+ 20  reviews per month               86720 non-null   float64
+ 21  review rate number              102273 non-null  float64
+ 22  calculated host listings count  102280 non-null  float64
+ 23  availability 365                102151 non-null  float64
+ 24  house_rules                     50468 non-null   object 
+ 25  license                         2 non-null       object 
+dtypes: float64(9), int64(2), object(15)
+memory usage: 20.4+ MB
+
+[ ]
+airbnb.describe().T
+
+Conteo de variables categóricas.
+
+
+[ ]
+cols_cat = ['NAME','host_identity_verified', 'neighbourhood group', 'neighbourhood', 'country', 'country code',
+            'instant_bookable', 'cancellation_policy', 'room type', 'license']
+
+for col in cols_cat:
+  print(f'Columna {col}: {airbnb[col].nunique()} subniveles')
+Columna NAME: 61281 subniveles
+Columna host_identity_verified: 2 subniveles
+Columna neighbourhood group: 7 subniveles
+Columna neighbourhood: 224 subniveles
+Columna country: 1 subniveles
+Columna country code: 1 subniveles
+Columna instant_bookable: 2 subniveles
+Columna cancellation_policy: 3 subniveles
+Columna room type: 4 subniveles
+Columna license: 1 subniveles
+
+[ ]
+airbnb['cancellation_policy'].unique()
+array(['strict', 'moderate', 'flexible', nan], dtype=object)
+
+[ ]
+print(airbnb['cancellation_policy'])
+0           strict
+1         moderate
+2         flexible
+3         moderate
+4         moderate
+            ...   
+102594    flexible
+102595    moderate
+102596    moderate
+102597      strict
+102598    flexible
+Name: cancellation_policy, Length: 102599, dtype: object
+Ver si hay valores null o NaN
+
+
+[ ]
+#Indicar si columnas tienen o no valores null
+print(f"¿Tiene datos en null o NaN? {airbnb.isnull().any().any()}")
+print("¿Qué columnas poseen null o NaN?")
+display(airbnb.isnull().any())
+
+
+[ ]
+# Filtrar las filas que contienen al menos un valor nulo en alguno de los campos
+campos = ['neighbourhood group', 'neighbourhood', 'lat', 'long']
+filas_con_null = airbnb[airbnb[campos].isnull().any(axis=1)]
+print(filas_con_null[campos])
+      neighbourhood group       neighbourhood       lat      long
+74                    NaN  Washington Heights  40.83139 -73.94095
+75                    NaN        Clinton Hill  40.68346 -73.96374
+76                    NaN        East Village  40.72828 -73.98801
+77                    NaN     Upper East Side  40.76865 -73.95058
+78                    NaN            Woodside  40.75038 -73.90334
+90                    NaN        Williamsburg  40.71156 -73.96218
+91                    NaN            Bushwick  40.70032 -73.93830
+92                    NaN    Prospect Heights  40.68233 -73.97261
+148                   NaN        East Village  40.72354 -73.98295
+161                   NaN        Williamsburg  40.71088 -73.95055
+168                   NaN        Clinton Hill  40.68843 -73.96408
+196                   NaN             Chelsea  40.74859 -73.99671
+206                   NaN    Prospect Heights  40.67870 -73.97262
+241                   NaN         East Harlem  40.80942 -73.93936
+249                   NaN            Bushwick  40.68800 -73.91710
+262                   NaN         Eastchester  40.88057 -73.83572
+287                   NaN        Williamsburg  40.71031 -73.95830
+295                   NaN              Harlem  40.82976 -73.94867
+307                   NaN           Chinatown  40.71659 -73.98945
+319                   NaN        Williamsburg  40.71398 -73.95763
+361                   NaN      Queens Village  40.72413 -73.76133
+384                   NaN              Harlem  40.82399 -73.95328
+415                   NaN        Williamsburg  40.71363 -73.96019
+448                   NaN  Bedford-Stuyvesant  40.68669 -73.91989
+465                   NaN        East Village  40.72636 -73.98917
+488                   NaN         East Harlem  40.79320 -73.94007
+492                   NaN              Harlem  40.80518 -73.95359
+517              Brooklyn                 NaN  40.71580 -73.95803
+547             Manhattan                 NaN  40.73089 -73.98195
+553             Manhattan                 NaN  40.71300 -73.99752
+575             Manhattan                 NaN  40.79816 -73.96190
+589              Brooklyn                 NaN  40.68012 -73.97847
+613             Manhattan                 NaN  40.72709 -73.98274
+624             Manhattan                 NaN  40.75348 -73.97065
+633             Manhattan                 NaN  40.71693 -73.98948
+643              Brooklyn                 NaN  40.68016 -73.94878
+670              Brooklyn                 NaN  40.73641 -73.95330
+678              Brooklyn                 NaN  40.73693 -73.95316
+681              Brooklyn                 NaN  40.73783 -73.95259
+726             Manhattan                 NaN  40.76217 -73.98411
+731             Manhattan                 NaN  40.78304 -73.97447
+760              Brooklyn                 NaN  40.72723 -73.95728
+770              Brooklyn                 NaN  40.65992 -73.99042
+779              Brooklyn       Crown Heights       NaN       NaN
+785              Brooklyn          Greenpoint       NaN       NaN
+799             Manhattan        East Village       NaN       NaN
+814             Manhattan        West Village       NaN       NaN
+843                Queens            Elmhurst       NaN       NaN
+885              Brooklyn          Greenpoint       NaN       NaN
+926             Manhattan   Flatiron District       NaN       NaN
+986             Manhattan     Upper West Side       NaN       NaN
+40383                 NaN            Bushwick  40.69085 -73.90937
+40396                 NaN     Upper West Side  40.79471 -73.96918
+
+[ ]
+airbnb.loc[airbnb['neighbourhood'] == 'Windsor Terrace', ['neighbourhood group', 'lat', 'long']]
+
+
+Ver si hay outliers en variables numéricas
+
+
+[ ]
+cols_num=['Construction year','minimum nights', 'number of reviews', 'reviews per month', 'review rate number',
+          'calculated host listings count', 'availability 365']
+fig, ax = plt.subplots(nrows=7, ncols=1, figsize=(8,30))
+fig.subplots_adjust(hspace=0.5)
+
+for i, col in enumerate(cols_num):
+  sns.boxplot(x=col, data=airbnb, ax=ax[i])
+  ax[i].set_title(col)
+
+
+[ ]
+airbnb['minimum nights'].min()
+-1223.0
+
+[ ]
+airbnb['minimum nights'].max()
+5645.0
+
+[ ]
+airbnb['availability 365'].min()
+-10.0
+
+[ ]
+airbnb['availability 365'].max()
+3677.0
+Chequear si hay valores repetidos
+
+
+[ ]
+airbnb['id'].duplicated().any()
+True
+Transformaciones: Limpieza del dataset
+Borrado de registros duplicados, campos sin valor o valores con errores de data entry.
+
+
+[ ]
+airbnb = airbnb.drop_duplicates(subset=['id'], keep='first')
+airbnb['id'].duplicated().any()
+False
+
+[ ]
+airbnb = airbnb.drop(airbnb[airbnb['minimum nights'] < 0].index)
+airbnb = airbnb.drop(airbnb[airbnb['minimum nights'] > 365].index)
+
+[ ]
+airbnb = airbnb.drop(airbnb[airbnb['availability 365'] < 0].index)
+airbnb = airbnb.drop(airbnb[airbnb['availability 365'] > 365].index)
+
+[ ]
+airbnb = airbnb.drop(['host name','license', 'country', 'country code'], axis=1)
+
+[ ]
+airbnb['Construction year'].median()
+2012.0
+
+[ ]
+#Remplazo de valores null es en campo de Construction Year con el valor de la mediana
+mediana_construction_year = airbnb['Construction year'].median()
+airbnb['Construction year'] = airbnb['Construction year'].fillna(mediana_construction_year)
+Borrado de valores null/NaN, porque se asume que al no tener precio no se encuentran activos
+
+
+[ ]
+airbnb = airbnb.dropna(subset=['price'])
+Reemplazo de valores null
+
+
+[ ]
+airbnb['host_identity_verified'] = airbnb['host_identity_verified'].fillna('unconfirmed')
+airbnb['NAME'] = airbnb['NAME'].fillna('unknown')
+airbnb['instant_bookable'] = airbnb['instant_bookable'].fillna('False')
+airbnb['cancellation_policy'] = airbnb['cancellation_policy'].fillna('unknown')
+airbnb['minimum nights'] = airbnb['minimum nights'].fillna(1)
+airbnb['availability 365'] = airbnb['availability 365'].fillna(365)
+Reemplazo de neighbourhood group faltantes
+
+
+[ ]
+airbnb.loc[airbnb['neighbourhood'] == 'Williamsburg', 'neighbourhood group'] = airbnb.loc[airbnb['neighbourhood'] == 'Williamsburg', 'neighbourhood group'].fillna('Brooklyn')
+airbnb.loc[airbnb['neighbourhood'] == 'Washington Heights', 'neighbourhood group'] = airbnb.loc[airbnb['neighbourhood'] == 'Washington Heights', 'neighbourhood group'].fillna('Manhattan')
+airbnb.loc[airbnb['neighbourhood'] == 'Clinton Hill', 'neighbourhood group'] = airbnb.loc[airbnb['neighbourhood'] == 'Clinton Hill', 'neighbourhood group'].fillna('Brooklyn')
+airbnb.loc[airbnb['neighbourhood'] == 'East Village', 'neighbourhood group'] = airbnb.loc[airbnb['neighbourhood'] == 'East Village', 'neighbourhood group'].fillna('Manhattan')
+airbnb.loc[airbnb['neighbourhood'] == 'Upper East Side', 'neighbourhood group'] = airbnb.loc[airbnb['neighbourhood'] == 'Upper East Side', 'neighbourhood group'].fillna('Manhattan')
+airbnb.loc[airbnb['neighbourhood'] == 'Woodside', 'neighbourhood group'] = airbnb.loc[airbnb['neighbourhood'] == 'Woodside', 'neighbourhood group'].fillna('Queens')
+airbnb.loc[airbnb['neighbourhood'] == 'Bushwick', 'neighbourhood group'] = airbnb.loc[airbnb['neighbourhood'] == 'Bushwick', 'neighbourhood group'].fillna('Brooklyn')
+airbnb.loc[airbnb['neighbourhood'] == 'Prospect Heights', 'neighbourhood group'] = airbnb.loc[airbnb['neighbourhood'] == 'Prospect Heights', 'neighbourhood group'].fillna('Brooklyn')
+airbnb.loc[airbnb['neighbourhood'] == 'Chelsea', 'neighbourhood group'] = airbnb.loc[airbnb['neighbourhood'] == 'Chelsea', 'neighbourhood group'].fillna('Manhattan')
+airbnb.loc[airbnb['neighbourhood'] == 'East Harlem', 'neighbourhood group'] = airbnb.loc[airbnb['neighbourhood'] == 'East Harlem', 'neighbourhood group'].fillna('Manhattan')
+airbnb.loc[airbnb['neighbourhood'] == 'Eastchester', 'neighbourhood group'] = airbnb.loc[airbnb['neighbourhood'] == 'Eastchester', 'neighbourhood group'].fillna('Bronx')
+airbnb.loc[airbnb['neighbourhood'] == 'Harlem', 'neighbourhood group'] = airbnb.loc[airbnb['neighbourhood'] == 'Harlem', 'neighbourhood group'].fillna('Manhattan')
+airbnb.loc[airbnb['neighbourhood'] == 'Chinatown', 'neighbourhood group'] = airbnb.loc[airbnb['neighbourhood'] == 'Chinatown', 'neighbourhood group'].fillna('Manhattan')
+airbnb.loc[airbnb['neighbourhood'] == 'Queens Village', 'neighbourhood group'] = airbnb.loc[airbnb['neighbourhood'] == 'Queens Village', 'neighbourhood group'].fillna('Queens')
+airbnb.loc[airbnb['neighbourhood'] == 'Bedford-Stuyvesant', 'neighbourhood group'] = airbnb.loc[airbnb['neighbourhood'] == 'Bedford-Stuyvesant', 'neighbourhood group'].fillna('Brooklyn')
+airbnb.loc[airbnb['neighbourhood'] == 'Upper West Side', 'neighbourhood group'] = airbnb.loc[airbnb['neighbourhood'] == 'Upper West Side', 'neighbourhood group'].fillna('Manhattan')
+Reemplazo de neighbourhood faltantes
+
+
+[ ]
+airbnb.loc[547, 'neighbourhood'] = 'East Village'
+airbnb.loc[553, 'neighbourhood'] = 'Chinatown'
+airbnb.loc[575, 'neighbourhood'] = 'Upper West Side'
+airbnb.loc[589, 'neighbourhood'] = 'Prospect Heights'
+airbnb.loc[613, 'neighbourhood'] = 'East Village'
+airbnb.loc[624, 'neighbourhood'] = 'Midtown'
+airbnb.loc[633, 'neighbourhood'] = 'Lower East Side'
+airbnb.loc[678, 'neighbourhood'] = 'Greenpoint'
+airbnb.loc[681, 'neighbourhood'] = 'Williamsburg'
+airbnb.loc[726, 'neighbourhood'] = 'Hell´s Kitchen'
+airbnb.loc[731, 'neighbourhood'] = 'Upper West Side'
+airbnb.loc[760, 'neighbourhood'] = 'Greenpoint'
+airbnb.loc[770, 'neighbourhood'] = 'Windsor Terrace'
+Reemplazo de latitud y longitud faltantes
+
+
+[ ]
+airbnb.loc[airbnb['neighbourhood'] == 'Upper West Side', 'lat'] = airbnb.loc[airbnb['neighbourhood'] == 'Upper West Side', 'lat'].fillna(40.80318)
+airbnb.loc[airbnb['neighbourhood'] == 'Upper West Side', 'long'] = airbnb.loc[airbnb['neighbourhood'] == 'Upper West Side', 'long'].fillna(-73.96549)
+
+[ ]
+airbnb.loc[airbnb['neighbourhood'] == 'Crown Heights', 'lat'] = airbnb.loc[airbnb['neighbourhood'] == 'Crown Heights', 'lat'].fillna(40.67562)
+airbnb.loc[airbnb['neighbourhood'] == 'Crown Heights', 'long'] = airbnb.loc[airbnb['neighbourhood'] == 'Crown Heights', 'long'].fillna(-73.94662)
+
+[ ]
+airbnb.loc[airbnb['neighbourhood'] == 'Greenpoint', 'lat'] = airbnb.loc[airbnb['neighbourhood'] == 'Greenpoint', 'lat'].fillna(40.73463)
+airbnb.loc[airbnb['neighbourhood'] == 'Greenpoint', 'long'] = airbnb.loc[airbnb['neighbourhood'] == 'Greenpoint', 'long'].fillna(-73.95084)
+
+[ ]
+airbnb.loc[airbnb['neighbourhood'] == 'East Village', 'lat'] = airbnb.loc[airbnb['neighbourhood'] == 'East Village', 'lat'].fillna(40.72684)
+airbnb.loc[airbnb['neighbourhood'] == 'East Village', 'long'] = airbnb.loc[airbnb['neighbourhood'] == 'East Village', 'long'].fillna(-73.97989)
+
+[ ]
+airbnb.loc[airbnb['neighbourhood'] == 'West Village', 'lat'] = airbnb.loc[airbnb['neighbourhood'] == 'West Village', 'lat'].fillna(40.73544)
+airbnb.loc[airbnb['neighbourhood'] == 'West Village', 'long'] = airbnb.loc[airbnb['neighbourhood'] == 'West Village', 'long'].fillna(-74.00424)
+
+[ ]
+airbnb.loc[airbnb['neighbourhood'] == 'Elmhurst', 'lat'] = airbnb.loc[airbnb['neighbourhood'] == 'Elmhurst', 'lat'].fillna(40.73686)
+airbnb.loc[airbnb['neighbourhood'] == 'Elmhurst', 'long'] = airbnb.loc[airbnb['neighbourhood'] == 'Elmhurst', 'long'].fillna(-73.87693)
+
+[ ]
+airbnb.loc[airbnb['neighbourhood'] == 'Flatiron District', 'lat'] = airbnb.loc[airbnb['neighbourhood'] == 'Flatiron District', 'lat'].fillna(40.74044)
+airbnb.loc[airbnb['neighbourhood'] == 'Flatiron District', 'long'] = airbnb.loc[airbnb['neighbourhood'] == 'Flatiron District', 'long'].fillna(-73.99209)
+
+[ ]
+campos = ['neighbourhood group', 'neighbourhood', 'lat', 'long']
+filas_con_null = airbnb[airbnb[campos].isnull().any(axis=1)]
+print(filas_con_null[campos])
+Empty DataFrame
+Columns: [neighbourhood group, neighbourhood, lat, long]
+Index: []
+Tipos de datos
+Campo price. Dividir el campo en dos campos (Currency & Price)
+
+
+[ ]
+airbnb.price[0].split()
+['$966']
+
+[ ]
+airbnb[['Currency', 'Price']] = airbnb['price'].str.extract(r'(\D*)(\d+)')
+airbnb['Price'] = airbnb['Price'].astype(float)
+airbnb = airbnb.drop(['price'], axis=1)
+
+[ ]
+airbnb['replacement_value'] = airbnb.apply(lambda x: x['Price'] * 0.14 if x['cancellation_policy'] == 'strict' else x['Price'] * 0.03, axis=1)
+airbnb['service fee'].fillna(airbnb['replacement_value'], inplace=True)
+airbnb.drop(columns=['replacement_value'], inplace=True)
+
+[ ]
+airbnb['service fee'] = airbnb['service fee'].str.replace('$', '')
+airbnb['service fee'] = airbnb['service fee'].astype(float)
+
+[ ]
+airbnb['Construction year'] = airbnb['Construction year'].astype(int)
+airbnb['minimum nights'] = airbnb['minimum nights'].astype(int)
+airbnb['availability 365'] = airbnb['availability 365'].astype(int)
+
+[ ]
+print(airbnb['Price'].dtype)
+float64
+
+[ ]
+#Al obtener valores INT para price, borrar los <1, al considerarlos como fuera de servicio
+airbnb = airbnb.drop(airbnb[airbnb['Price'] <= 1].index)
+
+[ ]
+print(f"¿Tiene datos en null o NaN? {airbnb.isnull().any().any()}")
+print("¿Qué columnas poseen null o NaN?")
+display(airbnb.isnull().any())
+
+Renombre de campos
+[ ]
+airbnb = airbnb.rename(columns={'id': 'Case_ID'})
+airbnb = airbnb.rename(columns={'NAME': 'House_Name'})
+airbnb = airbnb.rename(columns={'host id': 'ID_Host'})
+airbnb = airbnb.rename(columns={'host_identity_verified': 'Host_Identity_Verified'})
+airbnb = airbnb.rename(columns={'neighbourhood group': 'Neighbourhood_Group'})
+airbnb = airbnb.rename(columns={'neighbourhood': 'Neighbourhood'})
+airbnb = airbnb.rename(columns={'lat': 'Latitud'})
+airbnb = airbnb.rename(columns={'long': 'Longitud'})
+airbnb = airbnb.rename(columns={'instant_bookable': 'Instant_Bookable'})
+airbnb = airbnb.rename(columns={'cancellation_policy': 'Cancellation_Policy'})
+airbnb = airbnb.rename(columns={'room type': 'Room_Type'})
+airbnb = airbnb.rename(columns={'Construction year': 'Construction_Year'})
+airbnb = airbnb.rename(columns={'service fee': 'Service_Fee'})
+airbnb = airbnb.rename(columns={'minimum nights': 'Min_Nights'})
+airbnb = airbnb.rename(columns={'number of reviews': 'Number_Reviews'})
+airbnb = airbnb.rename(columns={'last review': 'Last_Review'})
+airbnb = airbnb.rename(columns={'reviews per month': 'Reviews_Per_Month'})
+airbnb = airbnb.rename(columns={'review rate number': 'Review_Rate_Number'})
+airbnb = airbnb.rename(columns={'calculated host listings count': 'Calculated_Host_Listings_Count'})
+airbnb = airbnb.rename(columns={'availability 365': 'Availability_365'})
+airbnb = airbnb.rename(columns={'house_rules': 'House_Rules'})
+Unificación de criterio de escritura
+
+
+[ ]
+for columna in airbnb.columns:
+    if airbnb[columna].dtype == 'object':
+        airbnb[columna] = airbnb[columna].apply(lambda x: x.capitalize() if isinstance(x, str) else x)
+
+[ ]
+airbnb['Neighbourhood_Group'] = airbnb['Neighbourhood_Group'].str.title()
+airbnb['Neighbourhood'] = airbnb['Neighbourhood'].str.title()
+
+[ ]
+airbnb['Neighbourhood_Group'] = airbnb['Neighbourhood_Group'].replace({'Manhatan': 'Manhattan', 'Brookln': 'Brooklyn'}, regex=True)
+airbnb['Neighbourhood'] = airbnb['Neighbourhood'].replace({'Hell´S Kitchen': "Hell's Kitchen", "Hell'S Kitchen": "Hell's Kitchen",
+                                                           "Prince'S Bay":"Prince's Bay", "Bull'S Head":"Bull's Head"}, regex=True)
+
+[ ]
+airbnb.info()
+<class 'pandas.core.frame.DataFrame'>
+Index: 81320 entries, 0 to 102056
+Data columns (total 23 columns):
+ #   Column                          Non-Null Count  Dtype  
+---  ------                          --------------  -----  
+ 0   Case_ID                         81320 non-null  int64  
+ 1   House_Name                      81320 non-null  object 
+ 2   ID_Host                         81320 non-null  int64  
+ 3   Host_Identity_Verified          81320 non-null  object 
+ 4   Neighbourhood_Group             81320 non-null  object 
+ 5   Neighbourhood                   81320 non-null  object 
+ 6   Latitud                         81320 non-null  float64
+ 7   Longitud                        81320 non-null  float64
+ 8   Instant_Bookable                81320 non-null  object 
+ 9   Cancellation_Policy             81320 non-null  object 
+ 10  Room_Type                       81320 non-null  object 
+ 11  Construction_Year               81320 non-null  int64  
+ 12  Service_Fee                     81139 non-null  float64
+ 13  Min_Nights                      81320 non-null  int64  
+ 14  Number_Reviews                  81157 non-null  float64
+ 15  Last_Review                     68721 non-null  object 
+ 16  Reviews_Per_Month               68726 non-null  float64
+ 17  Review_Rate_Number              81068 non-null  float64
+ 18  Calculated_Host_Listings_Count  81076 non-null  float64
+ 19  Availability_365                81320 non-null  int64  
+ 20  House_Rules                     39525 non-null  object 
+ 21  Currency                        81320 non-null  object 
+ 22  Price                           81320 non-null  float64
+dtypes: float64(8), int64(5), object(10)
+memory usage: 14.9+ MB
+Agregado de valores sintéticos para calcular la cantidad de camas en cada propiedad
+
+[ ]
+airbnb['Room_Type'].unique()
+array(['Private room', 'Entire home/apt', 'Shared room', 'Hotel room'],
+      dtype=object)
+
+[ ]
+# Duplicar las columnas categóricas
+airbnb['Room_Type_Num'] = airbnb['Room_Type']
+
+[ ]
+# Inicializar LabelEncoder para cada columna categórica
+label_encoder = LabelEncoder()
+
+# Codificar cada columna categórica en airbnb
+airbnb['Room_Type_Num'] = label_encoder.fit_transform(airbnb['Room_Type_Num'])
+
+
+[ ]
+airbnb.head()
+
+
+[ ]
+print(airbnb['Room_Type_Num'].dtype)
+airbnb['Room_Type_Num'].unique()
+int64
+array([2, 0, 3, 1])
+
+[ ]
+##Generación de datos sinteticos con RandomForest
+np.random.seed(0)
+airbnb['Beds'] = np.random.randint(1, 6, airbnb.shape[0])
+
+[ ]
+# Separar las características y la variable objetivo
+X = airbnb[['Room_Type_Num', 'Price', 'Construction_Year']]
+y = airbnb['Beds']
+
+# Dividir el dataset en conjunto de entrenamiento y prueba
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
+
+# Escalar las características
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+# Entrenar el modelo RandomForestRegressor
+model = RandomForestRegressor(n_estimators=100, random_state=0)
+model.fit(X_train_scaled, y_train)
+
+
+[ ]
+# Predecir la cantidad de camas para el dataset original
+X_scaled = scaler.transform(X)
+airbnb['Predicted_Beds'] = model.predict(X_scaled).round().astype(int)
+
+# Asegurarse de que las predicciones estén dentro del rango esperado (1 a 5)
+airbnb['Predicted_Beds'] = airbnb['Predicted_Beds'].clip(lower=1, upper=5)
+
+print(airbnb)
+         Case_ID                                        House_Name  \
+0        1001254                Clean & quiet apt home by the park   
+1        1002102                             Skylit midtown castle   
+2        1002403               The village of harlem....new york !   
+3        1002755                                           Unknown   
+4        1003689  Entire apt: spacious studio/loft by central park   
+...          ...                                               ...   
+102051  57364103               A cozy getaway, home away from home   
+102053  57365208               Cozy bright room near prospect park   
+102054  57365760         Private bedroom with amazing rooftop view   
+102055  57366313     Pretty brooklyn one-bedroom for 2 to 4 people   
+102056  57366865        Room & private bathroom in historic harlem   
+
+            ID_Host Host_Identity_Verified Neighbourhood_Group  \
+0       80014485718            Unconfirmed            Brooklyn   
+1       52335172823               Verified           Manhattan   
+2       78829239556            Unconfirmed           Manhattan   
+3       85098326012            Unconfirmed            Brooklyn   
+4       92037596077               Verified           Manhattan   
+...             ...                    ...                 ...   
+102051  55697801194               Verified            Brooklyn   
+102053  77326652202            Unconfirmed            Brooklyn   
+102054  45936254757               Verified            Brooklyn   
+102055  23801060917               Verified            Brooklyn   
+102056  15593031571            Unconfirmed           Manhattan   
+
+             Neighbourhood   Latitud  Longitud Instant_Bookable  \
+0               Kensington  40.64749 -73.97237            False   
+1                  Midtown  40.75362 -73.98377            False   
+2                   Harlem  40.80902 -73.94190             True   
+3             Clinton Hill  40.68514 -73.95976             True   
+4              East Harlem  40.79851 -73.94399            False   
+...                    ...       ...       ...              ...   
+102051       East New York  40.66130 -73.89088             True   
+102053            Flatbush  40.64945 -73.96108             True   
+102054            Bushwick  40.69872 -73.92718            False   
+102055  Bedford-Stuyvesant  40.67810 -73.90822             True   
+102056              Harlem  40.81248 -73.94317             True   
+
+       Cancellation_Policy  ... Reviews_Per_Month  Review_Rate_Number  \
+0                   Strict  ...              0.21                 4.0   
+1                 Moderate  ...              0.38                 4.0   
+2                 Flexible  ...               NaN                 5.0   
+3                 Moderate  ...              4.64                 4.0   
+4                 Moderate  ...              0.10                 3.0   
+...                    ...  ...               ...                 ...   
+102051            Moderate  ...               NaN                 4.0   
+102053            Moderate  ...              0.44                 5.0   
+102054            Flexible  ...              0.72                 3.0   
+102055            Moderate  ...              3.12                 4.0   
+102056              Strict  ...               NaN                 1.0   
+
+        Calculated_Host_Listings_Count  Availability_365  \
+0                                  6.0               286   
+1                                  2.0               228   
+2                                  1.0               352   
+3                                  1.0               322   
+4                                  1.0               289   
+...                                ...               ...   
+102051                             1.0                88   
+102053                             1.0                 0   
+102054                             2.0                 0   
+102055                             2.0               235   
+102056                             1.0                 0   
+
+                                              House_Rules Currency  Price  \
+0       Clean up and treat the home the way you'd like...        $  966.0   
+1       Pet friendly but please confirm with me if the...        $  142.0   
+2       I encourage you to use my kitchen, cooking and...        $  620.0   
+3                                                     NaN        $  368.0   
+4       Please no smoking in the house, porch or on th...        $  204.0   
+...                                                   ...      ...    ...   
+102051                                                NaN        $  147.0   
+102053  Shoes off clean after yourself turn lights and...        $  696.0   
+102054                                             #name?        $  909.0   
+102055  * check out: 10am * we made an effort to keep ...        $  387.0   
+102056  Each of us is working and/or going to school a...        $  848.0   
+
+        Room_Type_Num  Beds  Predicted_Beds  
+0                   2     5               4  
+1                   0     1               2  
+2                   2     4               3  
+3                   0     4               2  
+4                   0     4               4  
+...               ...   ...             ...  
+102051              2     3               3  
+102053              2     5               5  
+102054              2     2               4  
+102055              0     5               3  
+102056              2     3               2  
+
+[81320 rows x 26 columns]
+
+[ ]
+##airbnb['Beds'].unique()
+airbnb['Predicted_Beds'].unique()
+array([4, 2, 3, 1, 5])
+
+[ ]
+bed_counts = airbnb['Predicted_Beds'].value_counts().sort_index()
+print(bed_counts)
+Predicted_Beds
+1     1762
+2    19662
+3    38081
+4    19802
+5     2013
+Name: count, dtype: int64
+
+[ ]
+airbnb = airbnb.drop(['Beds'], axis=1)
+Guardado del dataset transformado
+
+[ ]
+airbnb.to_csv('Airbnb_Final.csv', index=False, sep=';', encoding='utf-8')
+airbnb.to_excel('Airbnb_Archivo_Final.xlsx', index=False)
+Visualización
+
+[ ]
+plt.figure(figsize=(6,4))
+Properties_Neighbourhood_Group = airbnb.Neighbourhood_Group.value_counts()
+Properties_Neighbourhood_Group.plot.bar()
+plt.title("Properties in NY City by Districs")
+plt.xlabel("Districts")
+plt.ylabel("Amount of Properties")
+plt.xticks(rotation=45)
+plt.gca().axes.get_yaxis().set_visible(False)  #Ocultar los valores de Y
+for index, value in enumerate(Properties_Neighbourhood_Group):
+    plt.text(index, value + 1, str(value), ha='center', va='bottom') #Agrega etiquetas de texto con los valores a cada barra
+
+
+[ ]
+grupos_unicos = airbnb['Neighbourhood_Group'].unique()
+
+# Iterar sobre cada grupo único
+for grupo in grupos_unicos:
+    # Filtrar el DataFrame por el grupo actual
+    df_grupo = airbnb[airbnb['Neighbourhood_Group'] == grupo]
+
+    # Mostrar el nombre del grupo
+    print(f'Grupo de Barrios: {grupo}')
+
+    # Mostrar la lista de barrios para el grupo actual
+    barrios = df_grupo['Neighbourhood'].unique()
+    print(barrios)
+    print()  # Imprimir una línea en blanco para separar los resultados de cada grupo
+Grupo de Barrios: Brooklyn
+['Kensington' 'Clinton Hill' 'Bedford-Stuyvesant' 'South Slope'
+ 'Williamsburg' 'Fort Greene' 'Crown Heights' 'Park Slope'
+ 'Windsor Terrace' 'Bushwick' 'Flatbush' 'Prospect-Lefferts Gardens'
+ 'Greenpoint' 'Prospect Heights' 'Brooklyn Heights' 'Carroll Gardens'
+ 'Flatlands' 'Cobble Hill' 'Dumbo' 'Gowanus' 'East Flatbush' 'Boerum Hill'
+ 'Gravesend' 'East New York' 'Fort Hamilton' 'Sunset Park'
+ 'Brighton Beach' 'Cypress Hills' 'Bay Ridge' 'Sheepshead Bay'
+ 'Columbia St' 'Vinegar Hill' 'Canarsie' 'Borough Park'
+ 'Downtown Brooklyn' 'Midwood' 'Bensonhurst' 'Red Hook' 'Dyker Heights'
+ 'Sea Gate' 'Brownsville' 'Navy Yard' 'Manhattan Beach' 'Bergen Beach'
+ 'Coney Island' 'Bath Beach' 'Mill Basin' 'Gerritsen Beach']
+
+Grupo de Barrios: Manhattan
+['Midtown' 'Harlem' 'East Harlem' "Hell's Kitchen" 'Chinatown'
+ 'Upper West Side' 'West Village' 'Chelsea' 'Inwood' 'East Village'
+ 'Lower East Side' 'Kips Bay' 'Soho' 'Upper East Side'
+ 'Washington Heights' 'Financial District' 'Flatiron District'
+ 'Roosevelt Island' 'Greenwich Village' 'Little Italy' 'Two Bridges'
+ 'Murray Hill' 'Morningside Heights' 'Gramercy' 'Nolita'
+ 'Theater District' 'Noho' 'Tribeca' 'Battery Park City' 'Civic Center'
+ 'Stuyvesant Town' 'Marble Hill']
+
+Grupo de Barrios: Queens
+['Long Island City' 'Woodside' 'Ridgewood' 'Jamaica' 'Middle Village'
+ 'Ditmars Steinway' 'Astoria' 'Queens Village' 'Rockaway Beach'
+ 'Sunnyside' 'Elmhurst' 'Jackson Heights' 'St. Albans' 'Rego Park'
+ 'Briarwood' 'Ozone Park' 'East Elmhurst' 'Flushing' 'Arverne'
+ 'Cambria Heights' 'Bayside' 'Kew Gardens' 'College Point' 'Glendale'
+ 'Richmond Hill' 'Bellerose' 'Maspeth' 'Woodhaven' 'Forest Hills'
+ 'Kew Gardens Hills' 'Bay Terrace' 'Whitestone' 'Bayswater'
+ 'Fresh Meadows' 'Springfield Gardens' 'Howard Beach' 'Far Rockaway'
+ 'Corona' 'Jamaica Estates' 'Laurelton' 'Holliswood' 'Rosedale' 'Edgemere'
+ 'Belle Harbor' 'South Ozone Park' 'Jamaica Hills' 'Hollis' 'Douglaston'
+ 'Neponsit' 'Little Neck' 'Breezy Point' 'Glen Oaks']
+
+Grupo de Barrios: Bronx
+['Highbridge' 'Clason Point' 'Eastchester' 'Kingsbridge' 'Woodlawn'
+ 'University Heights' 'Allerton' 'Concourse Village' 'Concourse'
+ 'Wakefield' 'Spuyten Duyvil' 'Longwood' 'Morris Heights' 'Port Morris'
+ 'Fieldston' 'City Island' 'Mott Haven' 'Williamsbridge' 'Soundview'
+ 'Co-Op City' 'Parkchester' 'North Riverdale' 'Bronxdale' 'Riverdale'
+ 'Norwood' 'Fordham' 'Van Nest' 'Mount Hope' 'Morris Park' 'Tremont'
+ 'Hunts Point' 'Pelham Bay' 'Throgs Neck' 'West Farms' 'Morrisania'
+ 'Pelham Gardens' 'Belmont' 'Baychester' 'Melrose' 'Claremont Village'
+ 'Schuylerville' 'Castle Hill' 'Olinville' 'Edenwald' 'Mount Eden'
+ 'East Morrisania' 'Westchester Square' 'Unionport']
+
+Grupo de Barrios: Staten Island
+['Tompkinsville' 'Emerson Hill' 'Shore Acres' 'Arrochar' 'Clifton'
+ 'Graniteville' 'Tottenville' 'Mariners Harbor' 'Concord' 'Port Richmond'
+ 'St. George' 'Woodrow' 'Eltingville' 'Stapleton' 'Lighthouse Hill'
+ 'West Brighton' 'Great Kills' 'Dongan Hills' 'Randall Manor'
+ 'Silver Lake' 'Castleton Corners' 'New Brighton' 'Midland Beach'
+ 'Richmondtown' 'Howland Hook' 'New Dorp Beach' "Prince's Bay"
+ 'South Beach' 'Oakwood' 'Huguenot' 'Grant City' 'Westerleigh'
+ 'New Springville' 'Bay Terrace, Staten Island' 'Fort Wadsworth'
+ 'Rosebank' 'Arden Heights' "Bull's Head" 'New Dorp' 'Grymes Hill'
+ 'Rossville' 'Willowbrook' 'Todt Hill' 'Chelsea, Staten Island']
+
+
+[ ]
+distritos_unicos = airbnb['Neighbourhood_Group'].unique()
+
+# Calcular el número de subgráficos necesarios
+num_subplots = len(distritos_unicos)
+
+# Calcular el número de filas y columnas para organizar los subgráficos
+num_filas = math.ceil(num_subplots / 2)
+num_columnas = min(2, num_subplots)
+
+# Configurar el tamaño de la figura
+plt.figure(figsize=(12, 6 * num_filas))
+
+# Iterar sobre cada distrito y trazar un gráfico de barras por separado
+for i, distrito in enumerate(distritos_unicos, 1):
+    plt.subplot(num_filas, num_columnas, i)  # Configurar el gráfico en la cuadrícula
+    propiedades_por_barrio = airbnb[airbnb['Neighbourhood_Group'] == distrito]['Neighbourhood'].value_counts()
+    propiedades_por_barrio = propiedades_por_barrio.head(10)
+    ax = propiedades_por_barrio.plot.bar()
+    ax.set_title(f'Top 10 of Properties by Neighbourhood in {distrito}')
+    ax.set_xlabel('Neighbourhood')
+    ax.set_ylabel("Amount of Properties")
+    # Ajustar las etiquetas del eje x para que estén centradas en las barras
+    ax.set_xticks(np.arange(len(propiedades_por_barrio)))
+    ax.set_xticklabels(propiedades_por_barrio.index, rotation=45, ha='right')
+
+# Ajustar el diseño de la figura
+plt.tight_layout()
+
+
+
+[ ]
+Properties_Year = airbnb['Construction_Year'].value_counts().sort_index() # Ordenar los datos por el año
+
+plt.figure(figsize=(10,6))
+Properties_Year.plot.bar()
+plt.title("Properties in NY City by Construction Year")
+plt.ylabel("Amount of Properties")
+
+
+[ ]
+airbnb['Room_Type'].unique()
+array(['Private room', 'Entire home/apt', 'Shared room', 'Hotel room'],
+      dtype=object)
+
+[ ]
+plt.figure(figsize=(8, 6))
+plt.scatter(airbnb['Price'], airbnb['Room_Type'], alpha=0.5)
+plt.title('Room Type vs Price')
+plt.xlabel('Price')
+plt.ylabel('Room Type')
+
+
+[ ]
+plt.figure(figsize=(8, 6))
+sns.histplot(data=airbnb, x='Price', hue='Room_Type', kde=True)
+plt.title('Price by Room Type')
+plt.xlabel('Price')
+plt.ylabel('Density')
+
+
+[ ]
+airbnb.groupby('Neighbourhood')['Price'].mean()
+Neighbourhood
+Allerton           344.106383
+Arden Heights      552.666667
+Arrochar           532.306122
+Arverne            441.463303
+Astoria            426.351471
+                      ...    
+Windsor Terrace    406.420561
+Woodhaven          372.497297
+Woodlawn           471.275862
+Woodrow             26.666667
+Woodside           437.245614
+Name: Price, Length: 224, dtype: float64
+
+[ ]
+plt.figure(figsize=(8, 6))
+airbnb['Price'].plot.hist(bins=20, color='blue', edgecolor='black')
+plt.title('Distribution of Prices')
+plt.xlabel('Price')
+plt.ylabel('Frequency')
+
+
+[ ]
+Total = (airbnb['Price'] * airbnb['Min_Nights']).sum()
+print(Total)
+331872299.0
+
+[ ]
+Cost = (airbnb['Service_Fee'] * airbnb['Min_Nights']).sum()
+print(Cost)
+95590692.0
+
+[ ]
+Margin = Total - Cost
+print(Margin)
+236281607.0
+
+[ ]
+colormap = plt.cm.viridis   # mapa de colores
+plt.figure(figsize = (35,35))
+plt.title('Correlación de Pearson de las características', y = 1.05, size = 15)
+sns.heatmap(airbnb.corr(), linewidths = 0.1, vmax = 1.0, square = True,
+            cmap = colormap,linecolor = 'white', annot = True)
+plt.show()
+
+
+[ ]
+# Seleccionar solo algunas variables específicas del DataFrame
+subset_variables = ['Host_Identity_Verified', 'Neighbourhood_Group','Neighbourhood','Instant_Bookable',
+                    'Cancellation_Policy', 'Room_Type', 'Service_Fee', 'Min_Nights', 'Number_Reviews',
+                    'Review_Rate_Number', 'Construction_Year', 'Availability_365', 'Price'
+                   ]
+
+# Calcular la correlación entre las variables seleccionadas
+subset_corr = airbnb[subset_variables].corr()
+
+plt.figure(figsize=(10, 8))
+heatmap = sns.heatmap(subset_corr, vmin=-1, vmax=1, annot=True, cmap='BrBG')
+heatmap.set_title('Correlación de las variables seleccionadas', fontdict={'fontsize': 18}, pad=16)
+
+
+[ ]
+# Seleccionar solo algunas variables específicas del DataFrame
+subset_variables = ['Neighbourhood_Group_Num','Room_Type_Num', 'Construction_Year', 'Price'
+                  ]
+
+# Calcular la correlación entre las variables seleccionadas
+subset_corr = airbnb[subset_variables].corr()
+
+plt.figure(figsize=(10, 8))
+heatmap = sns.heatmap(subset_corr, vmin=-1, vmax=1, annot=True, cmap='BrBG')
+heatmap.set_title('Correlación de las variables seleccionadas', fontdict={'fontsize': 18}, pad=16)
+
