@@ -52,4 +52,4 @@ This portfolio showcases practical projects combining **ETL (SQL, Python)**, **d
 
 ---
 
-> ✨ *Data that drives strategy.*  
+<h3 align="center">✨ “Data that drives strategy.” ✨</h3>
