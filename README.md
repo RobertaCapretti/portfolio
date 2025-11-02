@@ -34,14 +34,14 @@ Dashboard en Power BI: **Airbnb Analysis Dashboard (NY)** — incluye KPIs de oc
 ### 2️⃣ Contoso Sales — *Qlik Sense + MySQL*  
 Desarrollo end-to-end en Qlik Sense: extracción desde MySQL, transformaciones y armado de modelo estrella.  
 Dashboard: **Sales Performance**, **Customer Profile** y **Product Details**, con KPIs, comparaciones mensuales y conversión bimonetaria (USD/EUR).  
-🔗 [Ver proyecto](https://github.com/RobertaCapretti/portfolio/tree/main/Contoso_Sales)
+🔗 [Ver proyecto](https://github.com/RobertaCapretti/portfolio/tree/main/Contoso_QlikSense)
 
 ---
 
 ### 3️⃣ Falabella Sales — *Qlik Sense*  
 Automatización de carga y segmentación de datos en QVD por períodos mediante scripts y bucles.  
 Dashboard: **Sales Analysis** y **Sales Detail**, con KPIs, variaciones mensuales y análisis temporal dinámico.  
-🔗 [Ver proyecto](https://github.com/RobertaCapretti/portfolio/tree/main/Falabella_Sales)
+🔗 [Ver proyecto](https://github.com/RobertaCapretti/portfolio/tree/main/Falabella_QlikSense)
 
 ---
 
