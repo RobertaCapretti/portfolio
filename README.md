@@ -25,27 +25,25 @@ Cada proyecto refleja una etapa distinta del ciclo analítico o de desarrollo: d
 ## 📊 Proyectos destacados
 
 ### 1️⃣ Airbnb Analysis — Python + Power BI
-ETL y análisis exploratorio en Python: limpieza, tratamiento de outliers, reemplazo de valores nulos y generación de datos sintéticos con RandomForest. 
-
-Dashboard en Power BI con KPIs de ocupación, tipo de propiedad, ubicación y reviews, con filtros interactivos.
-
+ETL y análisis exploratorio en Python: limpieza, tratamiento de outliers, reemplazo de valores nulos y generación de datos sintéticos con RandomForest.  
+Dashboard en Power BI con KPIs de ocupación, tipo de propiedad, ubicación y reviews, con filtros interactivos.  
 🔗 [Ver proyecto](https://github.com/RobertaCapretti/portfolio/tree/main/Airbnb_Python_PowerBI)
 
 ---
 
 ### 2️⃣ Falabella Sales — Qlik Sense
-Automatización de carga y segmentación de datos en QVD por períodos mediante scripts y bucles. 
-
-Dashboards de Sales Analysis y Sales Detail, con KPIs, variaciones mensuales y análisis temporal dinámico.
-
+Automatización de carga y segmentación de datos en QVD por períodos mediante scripts y bucles.  
+Dashboards de Sales Analysis y Sales Detail, con KPIs, variaciones mensuales y análisis temporal dinámico.  
 🔗 [Ver proyecto](https://github.com/RobertaCapretti/portfolio/tree/main/Falabella_QlikSense)
 
 ---
 
-### 3️⃣ Mountain Risk Assessment Agent — LangGraph
-Sistema multiagente que evalúa riesgo de excursiones de montaña a partir de lenguaje natural, usando 4 tools especializadas para generar un score de riesgo y una recomendación tipo guía de montaña. 
+### 3️⃣ Mountain Risk Assessment Agent — LangChain + GroqCloud
+Agente de IA para evaluación de riesgo en excursiones de montaña mediante lenguaje natural.   
+Combina scoring determinístico con razonamiento agéntico: el agente elige autónomamente qué tools invocar según el input del usuario, generando recomendaciones contextualizadas como guía de montaña.
 
-Desarrollado en el marco del programa interno de IA Generativa de Taligent — **reconocido como proyecto destacado**.
+**Tools:** base de senderos · API meteorológica · cálculo de horas de luz · info turística del sendero  
+Desarrollado en el marco del programa interno de IA Generativa de Taligent — **reconocido como proyecto destacado**. 
 
 ---
 
