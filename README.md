@@ -43,7 +43,8 @@ Agente de IA para evaluación de riesgo en excursiones de montaña mediante leng
 Combina scoring determinístico con razonamiento agéntico: el agente elige autónomamente qué tools invocar según el input del usuario, generando recomendaciones contextualizadas como guía de montaña.
 
 **Tools:** base de senderos · API meteorológica · cálculo de horas de luz · info turística del sendero  
-Desarrollado en el marco del programa interno de IA Generativa de Taligent — **reconocido como proyecto destacado**. 
+Desarrollado en el marco del programa interno de IA Generativa de Taligent — **reconocido como proyecto destacado**.     
+🔗 [Ver proyecto](https://github.com/RobertaCapretti/portfolio/tree/main/Mountain_Risk_Assessment_Agent)
 
 ---
 
