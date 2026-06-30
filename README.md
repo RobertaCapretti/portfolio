@@ -15,7 +15,7 @@ Para mi perfil completo, ver el [README principal](https://github.com/RobertaCap
 
 ## 🧠 Sobre este portfolio
 
-Esta sección reúne proyectos de BI, análisis de datos e IA aplicada, desarrollados con Python, SQL, Power BI, Qlik Sense y frameworks de agentes (LangGraph). 
+Esta sección reúne proyectos de BI, análisis de datos e IA aplicada, desarrollados con Python, SQL, Power BI, Qlik Sense y frameworks de agentes (LangChain, LangGraph). 
 
 Cada proyecto refleja una etapa distinta del ciclo analítico o de desarrollo: desde ETL y modelado de datos hasta dashboards interactivos y sistemas de IA generativa.
 
