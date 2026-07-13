@@ -60,8 +60,7 @@ Convierte un único estado del proyecto en comunicaciones diferenciadas según e
 - Distribución automática por correo electrónico (SMTP)
 
 **Roadmap**  
-Primer componente de una futura suite de agentes orientada a automatizar procesos de Project Management.
-
+Primer componente de una futura suite de agentes orientada a automatizar procesos de Project Management.  
 🔗 [Ver proyecto](https://github.com/RobertaCapretti/portfolio/tree/main/AI_Project_Reporting_Agent)
 
 ---
