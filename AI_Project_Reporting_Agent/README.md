@@ -53,10 +53,10 @@ AI_Project_Reporting_Agent/
 pip install -r requirements.txt
 ```
 
-**2. Crear el archivo `.env` en la raíz:**
-GEMINI_API_KEY=tu_api_key_aqui
-GMAIL_USER=tu_mail@gmail.com
-GMAIL_APP_PASSWORD=tu_app_password_aqui
+**2. Crear el archivo `.env` en la raíz:**  
+GEMINI_API_KEY=tu_api_key_aqui  
+GMAIL_USER=tu_mail@gmail.com  
+GMAIL_APP_PASSWORD=tu_app_password_aqui  
 
 **3. Ejecutar:**
 ```bash
