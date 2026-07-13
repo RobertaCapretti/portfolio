@@ -1,0 +1,60 @@
+{
+  "proyecto": "Implementación Data Lakehouse — Databricks",
+  "stakeholders": [
+    {
+      "id": "S01",
+      "nombre": "Carlos Méndez",
+      "rol": "Sponsor (COO)",
+      "mail": "caprettiroberta@gmail.com",
+      "frecuencia": "mensual",
+      "canal": "mail",
+      "formato": "Executive Status Report",
+      "nivel_detalle": "alto nivel",
+      "instrucciones": "Máximo 1 página. Foco en cumplimiento de hitos, estado de presupuesto y riesgos críticos. Sin detalle técnico. Tono ejecutivo y directo."
+    },
+    {
+      "id": "S02",
+      "nombre": "Steering Committee",
+      "rol": "Comité de Dirección",
+      "mail": "caprettiroberta@gmail.com",
+      "frecuencia": "quincenal",
+      "canal": "mail",
+      "formato": "Dashboard de avance",
+      "nivel_detalle": "medio",
+      "instrucciones": "Máximo 1 página. Formato tabular: KPIs en verde/amarillo/rojo, avance por fase en tabla, riesgos críticos en 2-3 bullets, decisiones pendientes en lista numerada. Sin desarrollo narrativo largo."
+    },
+    {
+      "id": "S03",
+      "nombre": "Equipo Técnico",
+      "rol": "Data Engineer / Analyst / DevOps",
+      "mail": "caprettiroberta@gmail.com",
+      "frecuencia": "diaria",
+      "canal": "mail",
+      "formato": "Daily stand-up",
+      "nivel_detalle": "detalle técnico",
+      "instrucciones": "Formato ágil: qué se completó, qué sigue hoy, qué está bloqueado. Incluir tareas específicas con ID de WBS. Tono directo y operativo."
+    },
+    {
+      "id": "S04",
+      "nombre": "Usuarios Clave (SMEs)",
+      "rol": "Gerencias de Ventas, Marketing y Finanzas",
+      "mail": "caprettiroberta@gmail.com",
+      "frecuencia": "semanal",
+      "canal": "mail",
+      "formato": "Showcase / Sprint Review",
+      "nivel_detalle": "medio — orientado a negocio",
+      "instrucciones": "Máximo media página. Foco en: qué se entregó esta semana, qué necesitan validar ellos, fecha de próxima sesión. Sin detalle técnico ni financiero. Tono cercano y directo. Máximo 3 secciones cortas."
+    },
+    {
+      "id": "S05",
+      "nombre": "Organización",
+      "rol": "Comunicación general interna",
+      "mail": "caprettiroberta@gmail.com",
+      "frecuencia": "por hito",
+      "canal": "mail",
+      "formato": "Project Newsletter",
+      "nivel_detalle": "alto nivel — celebratorio",
+      "instrucciones": "Solo cuando se completa un hito clave. Tono positivo y motivador. Resaltar logros del equipo e impacto esperado para la organización. Máximo 3 párrafos."
+    }
+  ]
+}
