@@ -25,23 +25,24 @@ orientado a negocio.
 ---
 
 ## 🗂️ Estructura del proyecto
-ai_project_reporting_agent/
-├── agents/
-│   └── generador_reporte.py    # Genera el reporte con Gemini
-├── config/
-│   ├── stakeholders.json       # Configuración de stakeholders y preferencias
-│   └── contexto_proyecto.md    # Resumen ejecutivo y objetivos del proyecto
-├── data/
-│   └── lakehouse_project.xlsx  # Estado del proyecto (WBS, riesgos, cambios)
-├── docs/
-│   └── lakehouse_project_plan.pdf  # Documentación completa de gestión del proyecto
-├── tools/
-│   ├── leer_archivos.py        # Lee xlsx, JSON y markdown
-│   └── enviar_mail.py          # Envía mails via SMTP Gmail
-├── AGENTS.md                   # Contexto del proyecto para asistentes de IA
-├── main.py                     # Punto de entrada
-├── requirements.txt            # Dependencias
-└── .env                        # API keys (no incluido en el repo)
+ai_project_reporting_agent/  
+├── agents/  
+│   └── generador_reporte.py    # Genera el reporte con Gemini  
+├── config/    
+│   ├── stakeholders.json       # Configuración de stakeholders y preferencias  
+│   └── contexto_proyecto.md    # Resumen ejecutivo y objetivos del proyecto  
+├── data/  
+│   └── lakehouse_project.xlsx  # Estado del proyecto (WBS, riesgos, cambios)  
+├── docs/  
+│   ├── lakehouse_project_plan.pdf           # Documentación completa de gestión del proyecto  
+│   └── ai_project_reporting_agent_demo.pdf  # Output de ejemplo: los 5 reportes generados   
+├── tools/  
+│   ├── leer_archivos.py        # Lee xlsx, JSON y markdown  
+│   └── enviar_mail.py          # Envía mails via SMTP Gmail  
+├── AGENTS.md                   # Contexto del proyecto para asistentes de IA  
+├── main.py                     # Punto de entrada  
+├── requirements.txt            # Dependencias  
+└── .env                        # API keys (no incluido en el repo)  
 
 ---
 
