@@ -25,7 +25,7 @@ orientado a negocio.
 ---
 
 ## 🗂️ Estructura del proyecto
-ai_project_reporting_agent/  
+AI_Project_Reporting_Agent/  
 ├── agents/  
 │   └── generador_reporte.py    # Genera el reporte con Gemini  
 ├── config/    
