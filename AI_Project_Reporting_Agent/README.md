@@ -1,10 +1,8 @@
 # 🤖 AI Project Reporting Agent  
 
-Agente de IA que genera reportes ejecutivos de avance de proyecto adaptados a cada 
-stakeholder, leyendo el estado del proyecto desde archivos locales y enviándolos por mail.
+Agente de IA que genera reportes ejecutivos de avance de proyecto adaptados a cada stakeholder a partir del estado del proyecto y los distribuye automáticamente por correo electrónico.
 
-Desarrollado como proyecto de portfolio para demostrar la aplicación de IA a la gestión 
-de proyectos — combinando razonamiento estratégico de PM con automatización.
+Proyecto desarrollado para explorar cómo la IA puede asistir procesos de Project Management mediante automatización y generación inteligente de reportes.
 
 ---
 
@@ -24,10 +22,41 @@ orientado a negocio.
 
 ---
 
+## 🏗️ Arquitectura
+
+                +----------------------+
+                | Estado del Proyecto  |
+                | (WBS, Riesgos, etc.) |
+                +----------+-----------+
+                           |
+                           |
+                +----------v-----------+
+                | Configuración de     |
+                | Stakeholders         |
+                +----------+-----------+
+                           |
+                           |
+                +----------v-----------+
+                | AI Project           |
+                | Reporting Agent      |
+                +----------+-----------+
+                           |
+                           |
+                +----------v-----------+
+                | Reportes             |
+                | Personalizados       |
+                +----------+-----------+
+                           |
+                           |
+                +----------v-----------+
+                | Email Distribution   |
+                +----------------------+
+---
+
 ## 🗂️ Estructura del proyecto
 AI_Project_Reporting_Agent/  
 ├── agents/  
-│   └── generador_reporte.py    # Genera el reporte con Gemini  
+│   └── generador_reporte.py    # Genera el reporte con Gemini (no incluido en el repo)
 ├── config/    
 │   ├── stakeholders.json       # Configuración de stakeholders y preferencias  
 │   └── contexto_proyecto.md    # Resumen ejecutivo y objetivos del proyecto  
@@ -44,8 +73,10 @@ AI_Project_Reporting_Agent/
 ├── requirements.txt            # Dependencias  
 └── .env                        # API keys (no incluido en el repo)  
 
-> Este repositorio muestra la arquitectura y componentes principales del agente.  
-> Para consultas sobre implementación contactame por LinkedIn o mail.
+> Este repositorio presenta la arquitectura, los componentes principales y el enfoque funcional del agente.
+>
+> Si te interesa conversar sobre la implementación o posibles aplicaciones en entornos reales de Project Management, podés contactarme por LinkedIn o correo electrónico.
+
 ---
 
 ## 👥 Stakeholders configurados (proyecto ficticio)
