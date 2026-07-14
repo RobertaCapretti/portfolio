@@ -2,7 +2,7 @@
 
 Agente de IA que genera reportes ejecutivos de avance de proyecto adaptados a cada stakeholder a partir del estado del proyecto y los distribuye automáticamente por correo electrónico.
 
-Proyecto desarrollado para explorar cómo la IA puede asistir procesos de Project Management mediante automatización y generación inteligente de reportes.
+Proyecto desarrollado para aplicar IA a procesos de Project Management mediante automatización y generación inteligente de reportes.
 
 ---
 
@@ -51,31 +51,6 @@ orientado a negocio.
                 +----------v-----------+
                 | Email Distribution   |
                 +----------------------+
----
-
-## 🗂️ Estructura del proyecto
-AI_Project_Reporting_Agent/  
-├── agents/  
-│   └── generador_reporte.py    # Genera el reporte con Gemini (no incluido en el repo)
-├── config/    
-│   ├── stakeholders.json       # Configuración de stakeholders y preferencias  
-│   └── contexto_proyecto.md    # Resumen ejecutivo y objetivos del proyecto  
-├── data/  
-│   └── lakehouse_project.xlsx  # Estado del proyecto (WBS, riesgos, cambios)  
-├── docs/  
-│   ├── lakehouse_project_plan.pdf           # Documentación completa de gestión del proyecto  
-│   └── ai_project_reporting_agent_demo.pdf  # Output de ejemplo: los 5 reportes generados   
-├── tools/  
-│   ├── leer_archivos.py        # Lee xlsx, JSON y markdown  
-│   └── enviar_mail.py          # Envía mails via SMTP Gmail  
-├── AGENTS.md                   # Contexto del proyecto para asistentes de IA  
-├── main.py                     # Punto de entrada (no incluido en el repo)  
-├── requirements.txt            # Dependencias  
-└── .env                        # API keys (no incluido en el repo)  
-
-> Este repositorio presenta la arquitectura, los componentes principales y el enfoque funcional del agente.
->
-> Si te interesa conversar sobre la implementación o posibles aplicaciones en entornos reales de Project Management, podés contactarme por LinkedIn o correo electrónico.
 
 ---
 
@@ -137,3 +112,29 @@ Este proyecto representa el primer componente de una visión más amplia de auto
 El agente fue desarrollado sobre un proyecto ficticio de migración a Databricks 
 (Data Lakehouse). La documentación completa de gestión del proyecto — charter, WBS, 
 registro de riesgos y plan de comunicación — está disponible en `docs/`.
+
+---
+
+## 🗂️ Estructura del proyecto
+AI_Project_Reporting_Agent/  
+├── agents/  
+│   └── generador_reporte.py    # Genera el reporte con Gemini (no incluido en el repo)  
+├── config/    
+│   ├── stakeholders.json       # Configuración de stakeholders y preferencias  
+│   └── contexto_proyecto.md    # Resumen ejecutivo y objetivos del proyecto  
+├── data/  
+│   └── lakehouse_project.xlsx  # Estado del proyecto (WBS, riesgos, cambios)  
+├── docs/  
+│   ├── lakehouse_project_plan.pdf           # Documentación completa de gestión del proyecto  
+│   └── ai_project_reporting_agent_demo.pdf  # Output de ejemplo: los 5 reportes generados   
+├── tools/  
+│   ├── leer_archivos.py        # Lee xlsx, JSON y markdown  
+│   └── enviar_mail.py          # Envía mails via SMTP Gmail  
+├── AGENTS.md                   # Contexto del proyecto para asistentes de IA  
+├── main.py                     # Punto de entrada (no incluido en el repo)  
+├── requirements.txt            # Dependencias  
+└── .env                        # API keys (no incluido en el repo)  
+
+> Este repositorio presenta la arquitectura, los componentes principales y el enfoque funcional del agente.
+>
+> Si te interesa conversar sobre la implementación o posibles aplicaciones en entornos reales de Project Management, podés contactarme por LinkedIn o correo electrónico.
