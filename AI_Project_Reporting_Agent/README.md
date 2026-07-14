@@ -8,17 +8,29 @@ Proyecto desarrollado para aplicar IA a procesos de Project Management mediante 
 
 ## 🧠 ¿Qué hace?
 
-A partir de la documentación del proyecto (WBS, riesgos, cambios) y un archivo de 
-configuración de stakeholders, el agente:
+A partir de la documentación del proyecto (WBS, riesgos, cambios) y la configuración de stakeholders, el agente:
 
-1. Lee el estado actual del proyecto desde un archivo Excel
-2. Lee las preferencias de cada stakeholder (formato, nivel de detalle, frecuencia)
-3. Genera un reporte personalizado para cada uno usando Gemini 3.5
-4. Envía el reporte por mail automáticamente
+1. Obtiene el estado actual del proyecto.
+2. Identifica las preferencias de comunicación de cada stakeholder.
+3. Genera un reporte personalizado mediante un LLM.
+4. Distribuye automáticamente cada reporte por correo electrónico.
 
 Cada reporte es distinto: el COO recibe un Executive Status Report de alto nivel, 
 el equipo técnico recibe un Daily Stand-up operativo, los SMEs reciben un Showcase 
 orientado a negocio.
+
+---
+
+## 🎯 Caso de uso
+
+En un proyecto, cada stakeholder necesita un nivel de detalle diferente, aunque la información de origen sea la misma.
+
+- Sponsors → visión ejecutiva
+- Steering Committee → avance y riesgos
+- Equipo técnico → tareas operativas
+- Áreas de negocio → funcionalidades entregadas
+
+Este agente automatiza ese proceso: transforma un único estado del proyecto en comunicaciones adaptadas al rol, nivel de detalle y necesidades de información de cada audiencia, reduciendo trabajo manual y mejorando la consistencia de la comunicación.
 
 ---
 
@@ -66,16 +78,9 @@ orientado a negocio.
 
 ---
 
-## 🔄 Scheduler (envío automático por frecuencia)
+## 🔄 Comunicación automática
 
-El agente incluye la función `corresponde_enviar()` que determina si corresponde 
-enviar a cada stakeholder según la fecha y su frecuencia configurada:
-
-- **Diaria** → se envía todos los días
-- **Semanal** → se envía los lunes
-- **Quincenal** → se envía los días 1 y 15 de cada mes
-- **Mensual** → se envía el día 1 de cada mes
-- **Por hito** → solo ejecución manual  
+Cada stakeholder recibe el reporte correspondiente según la frecuencia configurada (diaria, semanal, quincenal, mensual o por hito), evitando generar manualmente múltiples versiones de un mismo estado del proyecto.
 
 ---
 
