@@ -6,6 +6,19 @@ Proyecto desarrollado para aplicar IA a procesos de Project Management mediante 
 
 ---
 
+## 🎯 Caso de uso
+
+En un proyecto, cada stakeholder necesita un nivel de detalle diferente, aunque la información de origen sea la misma.
+
+- Sponsors → visión ejecutiva
+- Steering Committee → avance y riesgos
+- Equipo técnico → tareas operativas
+- Áreas de negocio → funcionalidades entregadas
+
+Este agente automatiza ese proceso: transforma un único estado del proyecto en comunicaciones adaptadas al rol, nivel de detalle y necesidades de información de cada audiencia, reduciendo trabajo manual y mejorando la consistencia de la comunicación.
+
+---
+
 ## 🧠 ¿Qué hace?
 
 A partir de la documentación del proyecto (WBS, riesgos, cambios) y la configuración de stakeholders, el agente:
@@ -18,19 +31,6 @@ A partir de la documentación del proyecto (WBS, riesgos, cambios) y la configur
 Cada reporte es distinto: el COO recibe un Executive Status Report de alto nivel, 
 el equipo técnico recibe un Daily Stand-up operativo, los SMEs reciben un Showcase 
 orientado a negocio.
-
----
-
-## 🎯 Caso de uso
-
-En un proyecto, cada stakeholder necesita un nivel de detalle diferente, aunque la información de origen sea la misma.
-
-- Sponsors → visión ejecutiva
-- Steering Committee → avance y riesgos
-- Equipo técnico → tareas operativas
-- Áreas de negocio → funcionalidades entregadas
-
-Este agente automatiza ese proceso: transforma un único estado del proyecto en comunicaciones adaptadas al rol, nivel de detalle y necesidades de información de cada audiencia, reduciendo trabajo manual y mejorando la consistencia de la comunicación.
 
 ---
 
@@ -66,24 +66,6 @@ Este agente automatiza ese proceso: transforma un único estado del proyecto en 
 
 ---
 
-## 👥 Stakeholders configurados (proyecto ficticio)
-
-| ID | Rol | Frecuencia | Formato |
-|---|---|---|---|
-| S01 | Sponsor (COO) | Mensual | Executive Status Report |
-| S02 | Steering Committee | Quincenal | Dashboard de avance |
-| S03 | Equipo Técnico | Diaria | Daily Stand-up |
-| S04 | SMEs (Ventas/Marketing/Finanzas) | Semanal | Showcase / Sprint Review |
-| S05 | Organización | Por hito | Project Newsletter |
-
----
-
-## 🔄 Comunicación automática
-
-Cada stakeholder recibe el reporte correspondiente según la frecuencia configurada (diaria, semanal, quincenal, mensual o por hito), evitando generar manualmente múltiples versiones de un mismo estado del proyecto.
-
----
-
 ## 📦 Stack
 
 - **Modelo:** Gemini 3.5 Flash (Google AI Studio — gratuito)
@@ -109,6 +91,24 @@ Este proyecto representa el primer componente de una visión más amplia de auto
 - **Slack MCP** → Publicar reportes automáticamente en canales según el stakeholder.
 - **Microsoft Teams** → Distribuir comunicaciones ejecutivas (integración via webhook o Power Automate)
 - **Gmail / Outlook MCP** → Incorporar correos relevantes como contexto adicional y automatizar el envío de reportes.
+
+---
+
+## 👥 Stakeholders configurados (proyecto ficticio)
+
+| ID | Rol | Frecuencia | Formato |
+|---|---|---|---|
+| S01 | Sponsor (COO) | Mensual | Executive Status Report |
+| S02 | Steering Committee | Quincenal | Dashboard de avance |
+| S03 | Equipo Técnico | Diaria | Daily Stand-up |
+| S04 | SMEs (Ventas/Marketing/Finanzas) | Semanal | Showcase / Sprint Review |
+| S05 | Organización | Por hito | Project Newsletter |
+
+---
+
+## 🔄 Comunicación automática
+
+Cada stakeholder recibe el reporte correspondiente según la frecuencia configurada (diaria, semanal, quincenal, mensual o por hito), evitando generar manualmente múltiples versiones de un mismo estado del proyecto.
 
 ---
 
