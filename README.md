@@ -50,18 +50,14 @@ Desarrollado en el marco del programa interno de IA Generativa de Taligent — *
 
 ### 4️⃣ AI Project Reporting Agent — Python · Gemini · SMTP
 
-Agente de IA que automatiza la generación y distribución de reportes ejecutivos de proyecto adaptados a cada stakeholder.  
-Convierte un único estado del proyecto en comunicaciones diferenciadas según el rol, el nivel de detalle y las necesidades de información de cada audiencia.  
+Agente de IA que transforma el estado de un proyecto en reportes personalizados para distintos stakeholders, generando y distribuyendo automáticamente comunicaciones ejecutivas mediante LLM.
 
-**Componentes principales**
-- Lector de estado del proyecto (Excel: WBS, riesgos y cambios)
-- Lector de configuración de stakeholders (JSON)
-- Generador de reportes personalizados mediante Gemini 3.5
-- Distribución automática por correo electrónico (SMTP)
+**Stack**: Python · Gemini 3.5 · Excel · JSON · SMTP · Arquitectura modular
 
-**Roadmap**  
-Primer componente de una futura suite de agentes orientada a automatizar procesos de Project Management.  
-🔗 [Ver proyecto](https://github.com/RobertaCapretti/portfolio/tree/main/AI_Project_Reporting_Agent)
+**Roadmap**: Primer componente de una futura AI Project Management Suite basada en agentes especializados.
+ 
+📖 Incluye documentación funcional, arquitectura, roadmap y ejemplos de salida generados por IA.  
+🔗 [Ver proyecto](https://github.com/RobertaCapretti/portfolio/tree/main/AI_Project_Reporting_Agent)  
 
 ---
 
