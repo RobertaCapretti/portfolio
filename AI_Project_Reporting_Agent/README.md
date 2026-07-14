@@ -40,29 +40,12 @@ AI_Project_Reporting_Agent/
 │   ├── leer_archivos.py        # Lee xlsx, JSON y markdown  
 │   └── enviar_mail.py          # Envía mails via SMTP Gmail  
 ├── AGENTS.md                   # Contexto del proyecto para asistentes de IA  
-├── main.py                     # Punto de entrada  
+├── main.py                     # Punto de entrada (no incluido en el repo)  
 ├── requirements.txt            # Dependencias  
 └── .env                        # API keys (no incluido en el repo)  
 
----
-
-## ⚙️ Setup
-
-**1. Clonar el repo y crear el entorno:**
-```bash
-pip install -r requirements.txt
-```
-
-**2. Crear el archivo `.env` en la raíz:**  
-GEMINI_API_KEY=tu_api_key_aqui  
-GMAIL_USER=tu_mail@gmail.com  
-GMAIL_APP_PASSWORD=tu_app_password_aqui  
-
-**3. Ejecutar:**
-```bash
-python main.py
-```
-
+> Este repositorio muestra la arquitectura y componentes principales del agente.  
+> Para consultas sobre implementación contactame por LinkedIn o mail.
 ---
 
 ## 👥 Stakeholders configurados (proyecto ficticio)
@@ -80,8 +63,13 @@ python main.py
 ## 🔄 Scheduler (envío automático por frecuencia)
 
 El agente incluye la función `corresponde_enviar()` que determina si corresponde 
-enviar a cada stakeholder según la fecha. Por defecto está desactivada para permitir 
-ejecución manual. Para activarla, descomentá las líneas marcadas en `main.py`.
+enviar a cada stakeholder según la fecha y su frecuencia configurada:
+
+- **Diaria** → se envía todos los días
+- **Semanal** → se envía los lunes
+- **Quincenal** → se envía los días 1 y 15 de cada mes
+- **Mensual** → se envía el día 1 de cada mes
+- **Por hito** → solo ejecución manual  
 
 ---
 
